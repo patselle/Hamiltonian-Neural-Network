@@ -28,7 +28,7 @@ int main()
 {
     particle p[N];
 
-    particle_init(p, N);
+    particle_init(p);
 
     graphics_init();
     graphics_draw(p, N);
