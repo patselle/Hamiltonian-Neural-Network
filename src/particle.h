@@ -5,6 +5,6 @@ typedef struct
 {
     float x,y,z;
     float px,py,pz;
-}particle;
+} particle;
 
 #endif

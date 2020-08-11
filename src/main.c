@@ -2,24 +2,33 @@
 #include <stdio.h>
 
 #include "particle.h"
-
+#include "graphics.h"
 
 static inline float frand()
 {
     return (float)rand() / RAND_MAX;
 }
 
+static void particle_init(particle *p, int c)
+{
+    int i;
+
+    srand(time(NULL));
+
+    for (i = 0; i < c; i++)
+    {
+        p[i].x = (rand() % 50) - 25;
+        p[i].y = (rand() % 50) - 25;
+    }    
+}
+
 int main()
 {
-    printf("Hello from main\n");
+    particle p[10];
 
-    printf("Create some particles\n");
+    particle_init(p, 10);
 
-    particle a;
-    particle b;
-    particle c;
-
-    a.x = 3.0;
-
-    printf("random number in [0,1) %f\n", frand());
+    graphics_init();
+    graphics_draw(p, 10);
+    graphics_loop();
 }
