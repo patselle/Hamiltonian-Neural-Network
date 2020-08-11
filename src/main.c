@@ -4,18 +4,20 @@
 #include "particle.h"
 #include "graphics.h"
 
+#define N 10
+
 static inline float frand()
 {
     return (float)rand() / RAND_MAX;
 }
 
-static void particle_init(particle *p, int c)
+static void particle_init(particle *p)
 {
     int i;
 
     srand(time(NULL));
 
-    for (i = 0; i < c; i++)
+    for (i = 0; i < N; i++)
     {
         p[i].x = (rand() % 50) - 25;
         p[i].y = (rand() % 50) - 25;
@@ -24,11 +26,11 @@ static void particle_init(particle *p, int c)
 
 int main()
 {
-    particle p[10];
+    particle p[N];
 
-    particle_init(p, 10);
+    particle_init(p, N);
 
     graphics_init();
-    graphics_draw(p, 10);
+    graphics_draw(p, N);
     graphics_loop();
 }
