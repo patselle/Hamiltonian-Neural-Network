@@ -9,6 +9,7 @@
 
 CC=gcc
 CFLAGS=-O3 -pipe
+LDFLAGS=-lglfw -lGL
 
 SOURCES := $(shell find src -name '*.c')
 OBJECTS := $(patsubst src/%.c,%.o,$(SOURCES))
@@ -17,7 +18,7 @@ OBJECTS := $(patsubst src/%.c,%.o,$(SOURCES))
 	$(CC) $(CFLAGS) -c $< -o obj/$@
 
 all: clean $(OBJECTS)
-	$(CC) -o bin/main $(addprefix obj/, $(OBJECTS))
+	$(CC) -o bin/main $(addprefix obj/, $(OBJECTS)) $(LDFLAGS)
 
 clean:
 	@mkdir -p obj bin
