@@ -1,11 +1,11 @@
 #include <stdlib.h>
-#include <studio.h>
+#include <stdio.h>
 #include <math.h>
 #include <time.h>
 
 
 
-int maint() 
+int main() 
 {
-    printf('Hello from main');
+    printf("Hello from main");
 }
