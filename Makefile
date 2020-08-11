@@ -9,7 +9,7 @@
 
 CC=gcc
 CFLAGS=-O3 -pipe
-LDFLAGS=-lglfw -lGL
+LDFLAGS=-lglfw -lGL -lpthread
 
 SOURCES := $(shell find src -name '*.c')
 OBJECTS := $(patsubst src/%.c,%.o,$(SOURCES))
