@@ -7,8 +7,6 @@ typedef struct
     float px,py,pz;
     float mass;
     float radius;
-
-    //(float)malloc(DIMENSION)
-}particle;
+} particle;
 
 #endif

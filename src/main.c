@@ -2,52 +2,35 @@
 #include <stdio.h>
 
 #include "particle.h"
+#include "graphics.h"
 
-#define DIMENSION 2
-#define PARTICLES 3
-#define TIME_MAX 10
-#define TIME_STEP 0.1
-#define MOMENTA_MAX 100
+#define N 10
 
 static inline float frand()
 {
     return (float)rand() / RAND_MAX;
 }
 
-static inline float prand()
+static void particle_init(particle *p)
 {
-    return (float)rand() / RAND_MAX * MOMENTA_MAX;
+    int i;
+
+    srand(time(NULL));
+
+    for (i = 0; i < N; i++)
+    {
+        p[i].x = (rand() % 50) - 25;
+        p[i].y = (rand() % 50) - 25;
+    }    
 }
 
 int main()
 {
-    printf("Hello from main\n");
+    particle p[N];
 
-    printf("Create some particles\n");
+    particle_init(p);
 
-    particle a;
-    particle b;
-    particle c;
-
-    a.x = 3.0;
-
-    static particle particles[PARTICLES];
-
-    printf("random number in [0,1) %f\n", frand());
-
-    for (int a = 0; a < PARTICLES; a++)
-    {
-        printf("it %d\n", PARTICLES);
-        printf("it %d\n", RAND_MAX);
-
-        // init position
-        particles[a].x = frand();
-        particles[a].y = frand();
-        particles[a].z = frand();
-
-        // init momentum
-        particles[a].px = prand();
-        particles[a].py = prand();
-        particles[a].pz = prand();
-    }
+    graphics_init();
+    graphics_draw(p, N);
+    graphics_loop();
 }
