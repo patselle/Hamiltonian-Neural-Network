@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include "particle.h"
+#include "vecops.h"
 #include "graphics.h"
 
 #define DIMENSIONS 2
@@ -21,62 +22,12 @@ static inline float frand()
     return (float)rand() / RAND_MAX;
 }
 
-static vec3d vecsub(vec3d *pos1, vec3d *pos2)
-{
-    vec3d sum;
-    sum.x = pos1->x - pos2->x;
-    sum.y = pos1->y - pos2->y;
-    sum.z = pos1->z - pos2->z;
-
-    return sum;
-}
-
-static vec3d vecsum(vec3d *pos1, vec3d pos2)
-{
-    vec3d sum;
-    sum.x = pos1->x + pos2.x;
-    sum.y = pos1->y + pos2.y;
-    sum.z = pos1->z + pos2.z;
-
-    return sum;
-}
-
-static float vecquadraticdistance(vec3d *vec1, vec3d *vec2)
-{
-    float distance = 0;
-
-    distance += (vec1->x - vec2->x) * (vec1->x - vec2->x);
-    distance += (vec1->y - vec2->y) * (vec1->y - vec2->y);
-    distance += (vec1->z - vec2->z) * (vec1->z - vec2->z);
-
-    return distance;
-}
-
-static vec3d scalmul(float scalar, vec3d vec)
-{
-    vec3d scalvec;
-
-    // scalvec.x = *scalar * vec->x;
-    // scalvec.y = *scalar * vec->y;
-    // scalvec.z = *scalar * vec->z;
-
-    scalvec.x = scalar * vec.x;
-    scalvec.y = scalar * vec.y;
-    scalvec.z = scalar * vec.z;
-
-    return scalvec;
-}
-
-static vec3d normvec(vec3d *vec)
-{
-    vec3d vecnorm;
-    float scalar = sqrt(vec->x * vec->x + vec->y * vec->y + vec->z * vec->z);
-    return scalmul(scalar, *vec);
-}
 
 static void particle_init()
 {
     int i;
+
+    printf("Initialite particles...\n");
 
     srand(time(NULL));
 
@@ -123,16 +74,18 @@ static void *particle_move(void *args)
             }
         }
 
-        graphics_draw(particles, PARTICLES);
+        //graphics_draw(particles, PARTICLES);
 
         // 13 milliseconds
         //usleep(13 * 1000);
-        usleep(5 * 1000000);
+        // usleep(5 * 1000000);
     }
 }
 
 int main()
 {
+
+    printf("Starting 3-Body Simulation...\n");
 
     pthread_t thread;
 
@@ -140,9 +93,9 @@ int main()
 
     pthread_create(&thread, NULL, particle_move, NULL);
 
-    graphics_init();    
-    graphics_loop();
+    // graphics_init();    
+    // graphics_loop();
 
-    pthread_cancel(thread);
-    pthread_join(thread, NULL);
+    // pthread_cancel(thread);
+    // pthread_join(thread, NULL);
 }
