@@ -18,13 +18,3 @@ r_new = r_old + p_new / m * TIME_STEP
 insert p_new
 
 r_new = r_old + TIME_STEP / m * (p_old + F * TIME_STEP)
-
-```math
-SE = \frac{\sigma}{\sqrt{n}}
-```
-
-\begin{aligned}
-\dot{x} & = \sigma(y-x) \\
-\dot{y} & = \rho x - y - xz \\
-\dot{z} & = -\beta z + xy
-\end{aligned}
