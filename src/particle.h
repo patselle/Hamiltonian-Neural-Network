@@ -7,7 +7,6 @@ typedef struct
 {
     vec3f position;
     vec3f momentum;
-    vec3f force;
 
     float mass;
     float radius;

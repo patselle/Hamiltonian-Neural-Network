@@ -43,21 +43,9 @@ static void particle_init2()
     particles[2].mass = MASS;
 }
 
-static inline void particle_force_reset()
-{
-    off_t i;
-    
-    for (i = 0; i < PARTICLES; i++)
-    {
-        memset(&particles[i].force, 0, sizeof(vec3f));
-    }
-}
-
-static inline void particle_force(particle * const pi, particle * const pj)
+static inline void particle_force(particle const * const pi, particle const * const pj, vec3f * const f_i, vec3f * const f_j)
 {
     vec3f force, distance, norm;
-
-    memset(&force, 0, sizeof(vec3f));
 
     // compute distance
     vec3f_sub(&distance, &pi->position, &pj->position);
@@ -74,13 +62,10 @@ static inline void particle_force(particle * const pi, particle * const pj)
     vec3f_scalar(&force, &norm, scalar);
 
     // update force p_i
-    vec3f_add(&pi->force, &pi->force, &force);
+    vec3f_add(f_i, f_i, &force);
 
     // update force p_j
-    vec3f_sub(&pj->force, &pj->force, &force);
-
-    printf("force of particle i\n");
-    vec3f_print(&pj->force);
+    vec3f_sub(f_j, f_j, &force);
 }
 
 static void particle_move()
@@ -88,23 +73,20 @@ static void particle_move()
     off_t i, j;
 
     vec3f tmp, r_new, p_new;
-    
+    vec3f forces[PARTICLES];
+
     particle *pi, *pj;
 
     while (1)
     {
-        particle_force_reset();
+        // reset forces
+        memset(forces, 0, sizeof(vec3f) * PARTICLES);
 
         for (i = 0; i < PARTICLES; i++)
         {
-            pi = particles + i; 
-
             for (j = 0; j < i; j++)
             {
-
-                pj = particles + j;
-
-                particle_force(pi, pj);
+                particle_force(particles + i, particles + j, forces + i, forces + j);
             }
         }
 
@@ -118,14 +100,12 @@ static void particle_move()
         // insert p_new
         // r_new = r_old + TIME_STEP / m * (p_old + F * TIME_STEP)
 
-        int k;
-
-        for (k = 0; k < PARTICLES; k++)
+        for (i = 0; i < PARTICLES; i++)
         {
-            pi = particles + k;
+            pi = particles + i;
             
             // scalar multiplication: F *TIME_STEP
-            vec3f_scalar(&tmp, &pi->force, TIME_STEP);
+            vec3f_scalar(&tmp, forces + i, TIME_STEP);
             // add p_old and F * TIME_STEP together (this is p_new)
             vec3f_add(&p_new, &pi->momentum, &tmp);
             // scalar multiplication of TIME_STEP / m * (p_old + F * TIME_STEP)
