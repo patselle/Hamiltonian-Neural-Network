@@ -8,6 +8,7 @@
 #include "particle.h"
 #include "vec.h"
 #include "graphics.h"
+#include "trace.h"
 
 #define DIMENSIONS 2
 #define PARTICLES 3
@@ -77,13 +78,8 @@ static void particle_move()
 
     particle *pi, *pj;
 
-    printf("position: (%f, %f)\n", particles[0].position.x, particles[0].position.y);
-    printf("position: (%f, %f)\n", particles[1].position.x, particles[1].position.y);
-    printf("position: (%f, %f)\n", particles[2].position.x, particles[2].position.y);
-
     for (c = 0; c < 1000000; c++)
     {
-
         // reset forces
         memset(forces, 0, sizeof(vec3f) * PARTICLES);
 
@@ -125,6 +121,9 @@ static void particle_move()
             pi->momentum = p_new;
         }
 
+        // trace particle positions
+        trace(particles);
+
         //graphics_draw(particles, PARTICLES);
 
         // 13 milliseconds
@@ -140,6 +139,7 @@ static void particle_move()
 
 int main()
 {
+    trace_init("trace", PARTICLES);
 
     printf("Starting 3-Body Simulation...\n");
     particle_init2();
@@ -155,4 +155,6 @@ int main()
 
     // pthread_cancel(thread);
     // pthread_join(thread, NULL);
+
+    trace_end();
 }
