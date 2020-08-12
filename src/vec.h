@@ -2,6 +2,7 @@
 #define VEC_H
 
 #include <math.h>
+#include <stdio.h>
 
 #ifdef USE_AVX2
 #include <immintrin.h>
@@ -44,10 +45,16 @@ static inline void vec3f_add(vec3f * const c, vec3f const * const a, vec3f const
 #endif
 }
 
-// quadratic distance
-static float vec3f_quadist(vec3f const * const a, vec3f const * const b)
+static inline void vec3f_mul(vec3f * const c, vec3f const * const a, vec3f const * const b)
 {
-    return (a->x - b->x) * (a->x - b->x) + (a->y - b->y) * (a->y - b->y) + (a->z - b->z) * (a->z - b->z);
+    c->x = a->x * b->x;
+    c->y = a->y * b->y;
+    c->z = a->z * b->z;
+}
+
+static inline float vec3f_sum(vec3f const * const a)
+{
+    return a->x + a->y + a->z;
 }
 
 static inline void vec3f_scalar(vec3f * const c, vec3f const * const a, float scalar)
@@ -57,23 +64,16 @@ static inline void vec3f_scalar(vec3f * const c, vec3f const * const a, float sc
     c->z = scalar * a->z;
 }
 
-// euclidian norm
-static inline float vec3f_euclid(vec3f const * const a)
+static inline float vec3f_euclidian(vec3f const * const a)
 {
     return sqrt(a->x * a->x + a->y * a->y + a->z * a->z);
 }
 
-static inline void vec3f_norm(vec3f * const b, vec3f const * const a)
+static inline void vec3f_print(vec3f const * const a)
 {
-    vec3f_scalar(b, a, 1.0 / vec3f_euclid(a));
+    printf("(%f,%f,%f)\n", a->x, a->y, a->z);
 }
 
-static inline void vec3f_neg(vec3f * const a)
-{
-    a->x = - a->x;
-    a->y = - a->y;
-    a->z = - a->z;
-}
 
 #endif
 
