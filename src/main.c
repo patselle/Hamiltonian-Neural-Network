@@ -65,14 +65,10 @@ static inline void particle_force(particle const * const pi, particle const * co
     vec3f_add(f_i, f_i, &force);
 
     // update force p_j
-<<<<<<< HEAD
-    vec3f_sub(f_j, f_j, &force);
-=======
     vec3f_sub(&pj->force, &pj->force, &force);
 
     // printf("force of particle i\n");
     // vec3f_print(&pj->force);
->>>>>>> 2cda8fabf292a93e8f5bfbafbe38ed5b7fbfaf5c
 }
 
 static void particle_move()
