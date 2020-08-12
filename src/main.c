@@ -65,10 +65,7 @@ static inline void particle_force(particle const * const pi, particle const * co
     vec3f_add(f_i, f_i, &force);
 
     // update force p_j
-    vec3f_sub(&pj->force, &pj->force, &force);
-
-    // printf("force of particle i\n");
-    // vec3f_print(&pj->force);
+    vec3f_sub(f_j, f_j, &force);
 }
 
 static void particle_move()
@@ -97,16 +94,6 @@ static void particle_move()
                 particle_force(particles + i, particles + j, forces + i, forces + j);
             }
         }
-
-        // update position of particle i
-        // derivation of the equation
-        // v_new = v_old + F / m * TIME_STEP    (a = F / m)
-        // p_new = p_old + F * TIME_STEP
-        // with
-        // r_new = r_old + v * TIME_STEP
-        // r_new = r_old + p_new / m * TIME_STEP
-        // insert p_new
-        // r_new = r_old + TIME_STEP / m * (p_old + F * TIME_STEP)
 
         for (i = 0; i < PARTICLES; i++)
         {
