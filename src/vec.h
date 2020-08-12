@@ -32,9 +32,16 @@ static inline void vec3f_sub(vec3f * const c, vec3f const * const a, vec3f const
 
 static inline void vec3f_add(vec3f * const c, vec3f const * const a, vec3f const * const b)
 {
+#ifdef USE_AVX2
+    __m256 va = _mm256_load_ps((float*)a);
+    __m256 vb = _mm256_load_ps((float*)b);
+    __m256 vc = _mm256_add_ps(va, vb);
+    _mm256_store_ps((float*)c, vc);
+#else
     c->x = a->x + b->x;
     c->y = a->y + b->y;
     c->z = a->z + b->z;
+#endif
 }
 
 // quadratic distance
