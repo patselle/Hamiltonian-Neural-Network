@@ -77,7 +77,7 @@ static inline void particle_force(particle const * const pi, particle const * co
 
 static void particle_move()
 {
-    off_t i, j;
+    off_t i, j, c;
 
     vec3f tmp, r_new, p_new;
     vec3f forces[PARTICLES];
@@ -88,13 +88,8 @@ static void particle_move()
     printf("position: (%f, %f)\n", particles[1].position.x, particles[1].position.y);
     printf("position: (%f, %f)\n", particles[2].position.x, particles[2].position.y);
 
-    int count = 0;
-    while (1)
+    for (c = 0; c < 1000000; c++)
     {
-        if (count == 1000000)
-        {
-            break;
-        }
 
         // reset forces
         memset(forces, 0, sizeof(vec3f) * PARTICLES);
@@ -136,10 +131,6 @@ static void particle_move()
             // update momentum of particle i
             pi->momentum = p_new;
         }
-
-        count += 1;
-
-        // break;
 
         //graphics_draw(particles, PARTICLES);
 
