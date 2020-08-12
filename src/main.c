@@ -40,24 +40,50 @@ static void particle_init2()
     particles[2].position.z = 0;
 }
 
+static inline void particle_force_reset()
+{
+    off_t i;
+    
+    for (i = 0; i < PARTICLES; i++)
+    {
+        memset(&particles[i].force, 0, sizeof(vec3f));
+    }
+}
+
+static inline void particle_force(particle * const pi, particle * const pj)
+{
+    vec3f force, distance, norm, tmp;
+
+    // compute distance
+    vec3f_sub(&distance, &pi->position, &pj->position);
+
+    // compute normalized distance
+    vec3f_mul(&tmp, &distance, &distance);
+    float scalar = 1.0 / sqrt(vec3f_sum(&tmp));
+    vec3f_scalar(&norm, &distance, scalar);
+
+    // compute force
+    vec3f_scalar(&force, &norm, G);
+
+    printf("force: ");
+    vec3f_print(&force);
+
+    // update force p_i
+    vec3f_add(&pi->force, &pi->force, &force);
+
+    // update force p_j
+    vec3f_sub(&pj->force, &pj->force, &force);
+}
+
 static void particle_move()
 {
-    int i, j;
-    vec3f force, distance, norm, tmp;
+    off_t i, j;
+    
     particle *pi, *pj;
 
     while (1)
     {
-        // here compute particle movement
-
-        // set forces of all particles to zero
-        for (i = 0; i < PARTICLES; i++)
-        {
-            pi = particles + i;
-            memset(&pi->force, 0, sizeof(vec3f));
-        }
-
-        memset(&force, 0, sizeof(vec3f));
+        particle_force_reset();
 
         for (i = 0; i < PARTICLES; i++)
         {
@@ -67,25 +93,7 @@ static void particle_move()
             {
                 pj = particles + j;
 
-                // compute distance
-                vec3f_sub(&distance, &pi->position, &pj->position);
-
-                // compute normalized distance
-                vec3f_mul(&tmp, &distance, &distance);
-                float scalar = 1.0 / sqrt(vec3f_sum(&tmp));
-                vec3f_scalar(&norm, &distance, scalar);
-
-                // compute force
-                vec3f_scalar(&force, &norm, G);
-
-                printf("force[%i,%i]: ", i, j);
-                vec3f_print(&force);
-
-                // update force p_i
-                vec3f_add(&pi->force, &pi->force, &force);
-
-                 // update force p_j
-                vec3f_sub(&pj->force, &pj->force, &force);
+                particle_force(pi, pj);
             }
         }
 
