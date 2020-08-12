@@ -70,13 +70,13 @@ static void particle_move()
                 // compute distance
                 vec3f_sub(&distance, &pi->position, &pj->position);
 
-                // compute normalized distance vector
+                // compute normalized distance
                 vec3f_mul(&tmp, &distance, &distance);
                 float scalar = 1.0 / sqrt(vec3f_sum(&tmp));
                 vec3f_scalar(&norm, &distance, scalar);
 
-                // compute force F_ij
-                vec3f_scalar(&force, &norm, 1.0);
+                // compute force
+                vec3f_scalar(&force, &norm, G);
 
                 printf("force[%i,%i]: ", i, j);
                 vec3f_print(&force);
@@ -85,7 +85,7 @@ static void particle_move()
                 vec3f_add(&pi->force, &pi->force, &force);
 
                 // compute force F_ji = -F_ij
-                vec3f_neg(&force);
+                vec3f_scalar(&force, &force, -1);
                 
                 // add F_ji to particle j's force
                 vec3f_add(&pj->force, &pj->force, &force);

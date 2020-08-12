@@ -64,13 +64,6 @@ static inline void vec3f_scalar(vec3f * const c, vec3f const * const a, float sc
     c->z = scalar * a->z;
 }
 
-static inline void vec3f_neg(vec3f * const a)
-{
-    a->x = -a->x;
-    a->y = -a->y;
-    a->z = -a->z;
-}
-
 static inline void vec3f_print(vec3f const * const a)
 {
     printf("(%f,%f,%f)\n", a->x, a->y, a->z);
