@@ -68,5 +68,12 @@ static inline void vec3f_norm(vec3f * const b, vec3f const * const a)
     vec3f_scalar(b, a, 1.0 / vec3f_euclid(a));
 }
 
+static inline void vec3f_neg(vec3f * const a)
+{
+    a->x = - a->x;
+    a->y = - a->y;
+    a->z = - a->z;
+}
+
 #endif
 
