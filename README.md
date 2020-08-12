@@ -19,6 +19,6 @@ insert p_new
 
 r_new = r_old + TIME_STEP / m * (p_old + F * TIME_STEP)
 
-<img src="https://render.githubusercontent.com/render/math?math=\vec{\nu}_{new} = \nu_{old} + a\cdot \Delta t">
+<img src="https://render.githubusercontent.com/render/math?math=\vec{\nu}_{new} = \nu_{old} + a \cdot \mathbb{\Delta} t">
 
 <img src="https://render.githubusercontent.com/render/math?math=\nu_{new} = \nu_{old} + a\cdot\mathbb{\Delta}t">
