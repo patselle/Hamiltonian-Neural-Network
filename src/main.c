@@ -65,7 +65,14 @@ static inline void particle_force(particle const * const pi, particle const * co
     vec3f_add(f_i, f_i, &force);
 
     // update force p_j
+<<<<<<< HEAD
     vec3f_sub(f_j, f_j, &force);
+=======
+    vec3f_sub(&pj->force, &pj->force, &force);
+
+    // printf("force of particle i\n");
+    // vec3f_print(&pj->force);
+>>>>>>> 2cda8fabf292a93e8f5bfbafbe38ed5b7fbfaf5c
 }
 
 static void particle_move()
@@ -77,8 +84,18 @@ static void particle_move()
 
     particle *pi, *pj;
 
+    printf("position: (%f, %f)\n", particles[0].position.x, particles[0].position.y);
+    printf("position: (%f, %f)\n", particles[1].position.x, particles[1].position.y);
+    printf("position: (%f, %f)\n", particles[2].position.x, particles[2].position.y);
+
+    int count = 0;
     while (1)
     {
+        if (count == 1000000)
+        {
+            break;
+        }
+
         // reset forces
         memset(forces, 0, sizeof(vec3f) * PARTICLES);
 
@@ -120,7 +137,9 @@ static void particle_move()
             pi->momentum = p_new;
         }
 
-        break;
+        count += 1;
+
+        // break;
 
         //graphics_draw(particles, PARTICLES);
 
@@ -128,6 +147,11 @@ static void particle_move()
         //usleep(13 * 1000);
         // usleep(5 * 1000000);
     }
+
+    printf("#####################################################\n");
+    printf("position: (%f, %f)\n", particles[0].position.x, particles[0].position.y);
+    printf("position: (%f, %f)\n", particles[1].position.x, particles[1].position.y);
+    printf("position: (%f, %f)\n", particles[2].position.x, particles[2].position.y);
 }
 
 int main()
