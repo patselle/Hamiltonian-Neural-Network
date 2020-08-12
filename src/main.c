@@ -138,6 +138,7 @@ static void particle_move()
             pi->position = r_new;
             // update momentum of particle i
             pi->momentum = p_new;
+        }
 
         break;
 
