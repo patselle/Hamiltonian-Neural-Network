@@ -13,7 +13,7 @@ typedef struct
     float radius;
 } particle;
 
-inline float frand()
+static inline float frand()
 {
     return (float)rand() / RAND_MAX;
 }

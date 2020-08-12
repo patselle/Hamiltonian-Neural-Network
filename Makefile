@@ -20,6 +20,11 @@ OBJECTS := $(patsubst src/%.c,%.o,$(SOURCES))
 all: clean $(OBJECTS)
 	$(CC) -o bin/main $(addprefix obj/, $(OBJECTS)) $(LDFLAGS)
 
+avx2_flags:
+	$(eval CFLAGS += -DUSE_AVX2 -mavx2)
+
+avx2: avx2_flags all
+
 clean:
 	@mkdir -p obj bin
 	@rm -rf obj/* bin/*
