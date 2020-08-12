@@ -62,15 +62,13 @@ static inline void particle_force(particle * const pi, particle * const pj)
     // compute distance
     vec3f_sub(&distance, &pi->position, &pj->position);
 
+    float euclidian = vec3f_euclidian(&distance);
+
     // compute normalized distance vector
-    vec3f_scalar(&norm, &distance, 1.0 / vec3f_euclidian(&distance));
+    vec3f_scalar(&norm, &distance, 1.0 / euclidian);
 
     // compute normalized distance
-    float scalar = G * pi->mass * pj->mass * 1.0 / (vec3f_euclidian(&distance) * vec3f_euclidian(&distance));
-
-    // vec3f_mul(&tmp, &distance, &distance);
-    // float scalar = 1.0 / (sqrt(vec3f_sum(&tmp)));
-    // vec3f_scalar(&norm, &distance, scalar);
+    float scalar = G * pi->mass * pj->mass / (euclidian * euclidian);
 
     // compute force
     vec3f_scalar(&force, &norm, scalar);
@@ -99,38 +97,14 @@ static void particle_move()
         {
             pi = particles + i; 
 
-
-
             for (j = 0; j < i; j++)
             {
 
                 pj = particles + j;
 
-                printf("##########################################\n");
-                for (int k = 0; k < PARTICLES; k++)
-                {
-                    pk = particles + k;
-                    printf("particle %d\n", k);
-                    printf("(%f, %f)\n", pk->force.x, pk->force.y);
-                }
-                printf("##########################################\n");
-
-
-
                 particle_force(pi, pj);
             }
         }
-
-        printf("##########################################\n");
-        for (int k = 0; k < PARTICLES; k++)
-        {
-            pk = particles + k;
-            printf("particle %d\n", k);
-            printf("(%f, %f)\n", pk->force.x, pk->force.y);
-        }
-        printf("##########################################\n");
-
-
 
         break;
 
