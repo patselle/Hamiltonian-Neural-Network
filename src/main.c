@@ -44,7 +44,7 @@ static void particle_move()
 {
     int i, j;
     vec3f force, distance, norm;
-    particle *pi, *pj;
+    particle *pi, *pj, *pk;
 
     while (1)
     {
@@ -57,44 +57,27 @@ static void particle_move()
             memset(&pi->force, 0, sizeof(vec3f));
         }
 
-        memset(&force, 0, sizeof(vec3f));
-
         for (i = 0; i < PARTICLES; i++)
         {
             pi = particles + i;
 
+            
+
             for (j = 0; j < i; j++)
             {
-                // First (i: 1, j: 0) we compute F_10.
-                // This is the attraction between particle 0 and 1 acting on particle 0
-                // The negated force acts on particle 1
+
+                memset(&force, 0, sizeof(vec3f));
 
                 pj = particles + j;
-
-                printf("i: %d, j: %d\n", i, j);
-
 
                 // Set distance as the distance vector between i and j 
                 vec3f_sub(&distance, &pi->position, &pj->position);
 
-                printf("(%f,%f) - (%f,%f) = (%f,%f)\n", pi->position.x, pi->position.y, pj->position.x, pi->position.y, distance.x, distance.y);
-
-                printf("vec3f_quadist: %f\n", vec3f_quadist(&pi->position, &pj->position));
-
                 // float scalar =  G * pi->mass * pj->mass / vec3f_quadist(&pi->position, &pj->position);
                 float scalar = 1.0 / vec3f_quadist(&pi->position, &pj->position);
-                // float scalar2 = 1.0 / (vec3f_euclid(&distance) * vec3f_euclid(&distance));
-
-                printf("scalar: %f\n", scalar);
-
  
                 // Set norm as the normalized distance vector
                 vec3f_norm(&norm, &distance);
-
-                
-
-                printf("norm: (%f, %f)\n", norm.x, norm.y);
-
 
                 // compute force F_ij
                 vec3f_scalar(&force, &norm, scalar);
@@ -107,12 +90,6 @@ static void particle_move()
                 
                 // add F_ji to particle j's force
                 vec3f_add(&pj->force, &pj->force, &force);
-
-                printf("i.force: (%f, %f)\n", pi->force.x, pi->force.y);
-                printf("j.force: (%f, %f)\n", pj->force.x, pj->force.y);
-
-                printf("###########################\n");
-
 
             }
         }
