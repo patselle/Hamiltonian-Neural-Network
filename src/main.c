@@ -65,33 +65,15 @@ static void particle_move()
 
             for (j = 0; j < i; j++)
             {
-                // First (i: 1, j: 0) we compute F_10.
-                // This is the attraction between particle 0 and 1 acting on particle 0
-                // The negated force acts on particle 1
-
                 pj = particles + j;
 
-                printf("i: %d, j: %d\n", i, j);
-
-
-                // Set distance as the distance vector between i and j 
+                // compute distance
                 vec3f_sub(&distance, &pi->position, &pj->position);
 
-                printf("(%f,%f) - (%f,%f) = (%f,%f)\n", pi->position.x, pi->position.y, pj->position.x, pi->position.y, distance.x, distance.y);
-
+                // compute normalized distance vector
                 vec3f_mul(&tmp, &distance, &distance);
-                float scalar = 1 / vec3f_sum(&tmp);
-
-                printf("scalar: %f\n", scalar);
-
- 
-                // Set norm as the normalized distance vector
-                vec3f_norm(&norm, &distance);
-
-                
-
-                printf("norm: (%f, %f)\n", norm.x, norm.y);
-
+                float scalar = 1.0 / sqrt(vec3f_sum(&tmp));
+                vec3f_scalar(&norm, &distance, scalar);
 
                 // compute force F_ij
                 vec3f_scalar(&force, &norm, scalar);
@@ -104,13 +86,6 @@ static void particle_move()
                 
                 // add F_ji to particle j's force
                 vec3f_add(&pj->force, &pj->force, &force);
-
-                printf("i.force: (%f, %f)\n", pi->force.x, pi->force.y);
-                printf("j.force: (%f, %f)\n", pj->force.x, pj->force.y);
-
-                printf("###########################\n");
-
-
             }
         }
 
