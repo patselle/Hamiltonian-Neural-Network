@@ -62,6 +62,10 @@ static void particle_move()
             {
                 pj = particles + j;
 
+                printf("i: %d, j: %d\n", i, j);
+
+
+                // Set distance as the distance vector between i and j 
                 vec3f_sub(&distance, &pi->position, &pj->position);
 
                 printf("(%f,%f) - (%f,%f) = (%f,%f)\n", pi->position.x, pi->position.y, pj->position.x, pi->position.y, distance.x, distance.y);
@@ -70,11 +74,13 @@ static void particle_move()
 
                 // float scalar =  G * pi->mass * pj->mass / vec3f_quadist(&pi->position, &pj->position);
                 float scalar = 1.0 / vec3f_quadist(&pi->position, &pj->position);
+                float scalar2 = 1.0 / (vec3f_euclid(&distance) * vec3f_euclid(&distance));
 
                 printf("scalar: %f\n", scalar);
+                printf("scalar2: %f\n", scalar2);
 
  
-
+                // Set norm to normalized vector of the distance vector
                 vec3f_norm(&norm, &distance);
 
                 
