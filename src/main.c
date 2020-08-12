@@ -81,14 +81,11 @@ static void particle_move()
                 printf("force[%i,%i]: ", i, j);
                 vec3f_print(&force);
 
-                // add F_ij to particle i's force
+                // update force p_i
                 vec3f_add(&pi->force, &pi->force, &force);
 
-                // compute force F_ji = -F_ij
-                vec3f_scalar(&force, &force, -1);
-                
-                // add F_ji to particle j's force
-                vec3f_add(&pj->force, &pj->force, &force);
+                 // update force p_j
+                vec3f_sub(&pj->force, &pj->force, &force);
             }
         }
 
