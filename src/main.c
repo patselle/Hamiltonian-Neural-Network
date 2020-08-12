@@ -69,7 +69,7 @@ static inline void particle_force(particle const * const pi, particle const * co
     vec3f_sub(f_j, f_j, &force);
 }
 
-static void particle_move()
+static void *particle_move(void *args)
 {
     off_t i, j, c;
 
@@ -123,38 +123,29 @@ static void particle_move()
 
         // trace particle positions
         trace(particles);
+        graphics_draw(particles, PARTICLES);
 
-        //graphics_draw(particles, PARTICLES);
-
-        // 13 milliseconds
-        //usleep(13 * 1000);
-        // usleep(5 * 1000000);
+        // sleep 13 milliseconds = 60 fps
+        usleep(13 * 1000);
     }
-
-    printf("#####################################################\n");
-    printf("position: (%f, %f)\n", particles[0].position.x, particles[0].position.y);
-    printf("position: (%f, %f)\n", particles[1].position.x, particles[1].position.y);
-    printf("position: (%f, %f)\n", particles[2].position.x, particles[2].position.y);
 }
 
 int main()
 {
+    pthread_t thread;
+
     trace_init("trace", PARTICLES);
+    graphics_init();
+    //particle_init();
 
-    printf("Starting 3-Body Simulation...\n");
     particle_init2();
-    particle_move();
-    // pthread_t thread;
+    
+    pthread_create(&thread, NULL, particle_move, NULL);
 
-    // particle_init();
+    graphics_loop();
 
-    // pthread_create(&thread, NULL, particle_move, NULL);
-
-    // graphics_init();
-    // graphics_loop();
-
-    // pthread_cancel(thread);
-    // pthread_join(thread, NULL);
+    pthread_cancel(thread);
+    pthread_join(thread, NULL);
 
     trace_end();
 }
