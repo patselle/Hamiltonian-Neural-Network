@@ -44,10 +44,16 @@ static inline void vec3f_add(vec3f * const c, vec3f const * const a, vec3f const
 #endif
 }
 
-// quadratic distance
-static float vec3f_quadist(vec3f const * const a, vec3f const * const b)
+static inline void vec3f_mul(vec3f * const c, vec3f const * const a, vec3f const * const b)
 {
-    return (a->x - b->x) * (a->x - b->x) + (a->y - b->y) * (a->y - b->y) + (a->z - b->z) * (a->z - b->z);
+    c->x = a->x * b->x;
+    c->y = a->y * b->y;
+    c->z = a->z * b->z;
+}
+
+static inline float vec3f_sum(vec3f const * const a)
+{
+    return a->x + a->y + a->z;
 }
 
 static inline void vec3f_scalar(vec3f * const c, vec3f const * const a, float scalar)

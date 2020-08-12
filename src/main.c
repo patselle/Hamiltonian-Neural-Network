@@ -43,7 +43,7 @@ static void particle_init2()
 static void particle_move()
 {
     int i, j;
-    vec3f force, distance, norm;
+    vec3f force, distance, norm, tmp;
     particle *pi, *pj;
 
     while (1)
@@ -79,11 +79,8 @@ static void particle_move()
 
                 printf("(%f,%f) - (%f,%f) = (%f,%f)\n", pi->position.x, pi->position.y, pj->position.x, pi->position.y, distance.x, distance.y);
 
-                printf("vec3f_quadist: %f\n", vec3f_quadist(&pi->position, &pj->position));
-
-                // float scalar =  G * pi->mass * pj->mass / vec3f_quadist(&pi->position, &pj->position);
-                float scalar = 1.0 / vec3f_quadist(&pi->position, &pj->position);
-                // float scalar2 = 1.0 / (vec3f_euclid(&distance) * vec3f_euclid(&distance));
+                vec3f_mul(&tmp, &distance, &distance);
+                float scalar = 1 / vec3f_sum(&tmp);
 
                 printf("scalar: %f\n", scalar);
 
