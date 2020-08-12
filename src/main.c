@@ -11,37 +11,38 @@
 #include "trace.h"
 
 #define DIMENSIONS 2
-#define PARTICLES 3
+#define PARTICLES 5
 #define TIME_MAX 10
 #define TIME_STEP 0.1
 #define MASS 1
-#define G 1
+#define G 0.5
 
 static particle particles[PARTICLES];
 
 static void particle_init2()
 {
     /* use particle_init() from particle.h */
-    int i;
 
     printf("Initialize particles...\n");
 
     srand(time(NULL));
 
-    particles[0].position.x = 5;
-    particles[0].position.y = -2;
-    particles[0].position.z = 0;
-    particles[0].mass = MASS;
+    particle_init(particles, PARTICLES, 1);
 
-    particles[1].position.x = 3;
-    particles[1].position.y = 6;
-    particles[1].position.z = 0;
-    particles[1].mass = MASS;
+    // particles[0].position.x = 5;
+    // particles[0].position.y = -2;
+    // particles[0].position.z = 0;
+    // particles[0].mass = 0.1;
 
-    particles[2].position.x = -1;
-    particles[2].position.y = 4;
-    particles[2].position.z = 0;
-    particles[2].mass = MASS;
+    // particles[1].position.x = 3;
+    // particles[1].position.y = 6;
+    // particles[1].position.z = 0;
+    // particles[1].mass = 0.5;
+
+    // particles[2].position.x = -1;
+    // particles[2].position.y = 4;
+    // particles[2].position.z = 0;
+    // particles[2].mass = 0.01;
 }
 
 static inline void particle_force(particle const * const pi, particle const * const pj, vec3f * const f_i, vec3f * const f_j)
@@ -56,8 +57,8 @@ static inline void particle_force(particle const * const pi, particle const * co
     // compute normalized distance vector
     vec3f_scalar(&norm, &distance, 1.0 / euclidian);
 
-    // compute normalized distance
-    float scalar = G * pi->mass * pj->mass / (euclidian * euclidian);
+    // compute normalized distance (NOTE the minus sign is due the inverted direction between F_ij and r_ij)
+    float scalar = - G * pi->mass * pj->mass / (euclidian * euclidian);
 
     // compute force
     vec3f_scalar(&force, &norm, scalar);
@@ -78,7 +79,7 @@ static void *particle_move(void *args)
 
     particle *pi, *pj;
 
-    for (c = 0; c < 1000000; c++)
+    for (c = 0; c < 1000; c++)
     {
         // reset forces
         memset(forces, 0, sizeof(vec3f) * PARTICLES);
@@ -110,7 +111,6 @@ static void *particle_move(void *args)
             // update momentum of particle i
             pi->momentum = p_new;
         }
-
         // trace particle positions
         trace(particles);
         graphics_draw(particles, PARTICLES);
@@ -126,7 +126,6 @@ int main()
 
     trace_init("trace", PARTICLES);
     graphics_init();
-    //particle_init();
 
     particle_init2();
     
