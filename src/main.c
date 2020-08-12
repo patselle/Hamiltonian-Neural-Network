@@ -3,9 +3,10 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <math.h>
+#include <string.h>
 
 #include "particle.h"
-#include "vecops.h"
+#include "vec.h"
 #include "graphics.h"
 
 #define DIMENSIONS 2
@@ -17,17 +18,12 @@
 
 static particle particles[PARTICLES];
 
-static inline float frand()
+static void particle_init2()
 {
-    return (float)rand() / RAND_MAX;
-}
-
-
-static void particle_init()
-{
+    /* use particle_init() from particle.h */
     int i;
 
-    printf("Initialite particles...\n");
+    printf("Initialize particles...\n");
 
     srand(time(NULL));
 
@@ -42,90 +38,59 @@ static void particle_init()
     particles[2].position.x = -1;
     particles[2].position.y = 4;
     particles[2].position.z = 0;
-
-    for (i = 0; i < PARTICLES; i++)
-    {
-        // particles[i].position.x = (rand() % 50) - 25;
-        // particles[i].position.y = (rand() % 50) - 25;
-        // particles[i].position.z = 0;
-
-        // particles[i].momentum.x = frand() / 100;
-        // particles[i].momentum.y = frand() / 100;
-        // particles[i].momentum.z = 0;
-
-        particles[i].mass = MASS;
-
-        printf("particle %i: \n", i);
-        printf("pos: (%f, %f)\n", particles[i].position.x, particles[i].position.y);
-        //printf("mom: (%f, %f)\n", particles[i].momentum.x, particles[i].momentum.y);
-    }
-
-
-
 }
 
 static void particle_move()
 {
-    printf("\n");
     int i, j;
-    vec3d vecforce, diffposition, vecnorm;
-
-    int count = 0;
+    vec3f force, distance, norm;
+    particle *pi, *pj;
 
     while (1)
     {
-        if (count == 1)
-        {
-            break;  
-        }
         // here compute particle movement
 
         for (i = 0; i < PARTICLES; i++)
         {
-            // set sum of forces to zero
-            particles[i].force.x = 0;
-            particles[i].force.y = 0;
-            particles[i].force.z = 0;
+            pi = particles + i;
 
-            vecforce.x = 0;
-            vecforce.y = 0;
+            // set forces to zero
+            memset(&pi->force, 0, sizeof(vec3f));
+            memset(&force, 0, sizeof(vec3f));
 
             for (j = 0; j < i; j++)
             {
-                diffposition = vecsub(&particles[i].position, &particles[j].position);
+                pj = particles + j;
 
-                printf("i: %d, j: %d\n", i, j);
-                printf("(%f, %f) - (%f, %f) = (%f, %f)\n", particles[i].position.x,  particles[i].position.y, particles[j].position.x,  particles[j].position.y, diffposition.x, diffposition.y);
+                vec3f_sub(&distance, &pi->position, &pj->position);
 
-                printf("vecquadraticdistance: %f\n", vecquadraticdistance(&particles[i].position, &particles[j].position));
+                printf("(%f,%f) - (%f,%f) = (%f,%f)\n", pi->position.x, pi->position.y, pj->position.x, pi->position.y, distance.x, distance.y);
 
-                // float scalar =  G * particles[i].mass * particles[j].mass / vecquadraticdistance(&particles[i].position, &particles[j].position);
-                float scalar = 1.0 / vecquadraticdistance(&particles[i].position, &particles[j].position);
+                printf("vec3f_quadist: %f\n", vec3f_quadist(&pi->position, &pj->position));
+
+                // float scalar =  G * pi->mass * pj->mass / vec3f_quadist(&pi->position, &pj->position);
+                float scalar = 1.0 / vec3f_quadist(&pi->position, &pj->position);
 
                 printf("scalar: %f\n", scalar);
 
  
 
-                vecnorm = normvec(&diffposition);
+                vec3f_norm(&norm, &distance);
 
                 
 
-                printf("vecnorm: (%f, %f)\n", vecnorm.x, vecnorm.y);
+                printf("norm: (%f, %f)\n", norm.x, norm.y);
 
-                printf("vecforce: (%f, %f)\n", vecforce.x, vecforce.y);
+                vec3f_scalar(&norm, &norm, scalar);
+                vec3f_add(&force, &force, &norm);
 
-                vecforce = vecsum(&vecforce, scalmul(scalar, vecnorm));
-
-                printf("vecforce: (%f, %f)\n", vecforce.x, vecforce.y);
-
-                printf("= (%f, %f)\n", vecforce.x,  vecforce.y);
+                printf("force: (%f, %f)\n", force.x, force.y);
 
                 printf("###########################\n");
 
+                return;
             }
         }
-
-        count += 1;
 
         //graphics_draw(particles, PARTICLES);
 
@@ -139,7 +104,7 @@ int main()
 {
 
     printf("Starting 3-Body Simulation...\n");
-    particle_init();
+    particle_init2();
     particle_move();
     // pthread_t thread;
 
