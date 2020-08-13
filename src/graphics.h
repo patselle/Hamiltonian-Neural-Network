@@ -3,8 +3,8 @@
 
 #include "particle.h"
 
-extern void graphics_init(int const flags);
+extern void graphics_init(particle const * const p, opts_t const * const opts);
 extern void graphics_loop();
-extern void graphics_draw(particle *p, unsigned int const c);
+extern void graphics_update();
 
 #endif

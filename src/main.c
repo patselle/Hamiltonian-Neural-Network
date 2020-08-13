@@ -93,7 +93,9 @@ static void *particle_update(void *args)
         if (!(opts->flags & OPT_NO_GUI))
         {
             // update ui
-            graphics_draw(particles, opts->particle_count);
+            // actually this will only recompute center of mass
+            // actually center of mass should recomputed here in main. not in graphics component
+            graphics_update();
 
             // sleep 13 milliseconds
             usleep(13 * 1000);
@@ -111,10 +113,10 @@ int main(int argc, char **argv)
     opts_parse(&opts, argc, argv);
 
     trace_init(opts.trace_file, opts.particle_count);
-    graphics_init(opts.flags);
-
     particle_init(&particles, &opts);
-    
+
+    graphics_init(particles, &opts);
+
     pthread_create(&thread, NULL, particle_update, &opts);
 
     graphics_loop();

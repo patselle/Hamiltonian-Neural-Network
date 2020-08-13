@@ -11,16 +11,14 @@
 static GLFWwindow *m_win = NULL;
 
 static particle *m_p = NULL;
-static unsigned int m_c;
+static size_t m_c = 0;
 static vec3f m_center;
-
 
 static int m_width = 640;
 static int m_height = 480;
 static int m_logicalWidth = 500;
 
 static int m_showDebug = 0;
-
 
 typedef struct
 {
@@ -32,9 +30,6 @@ static color *m_colors = NULL;
 static void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-
-    if (!m_p)
-        return;
 
     float logicalWidthHalf = m_logicalWidth / 2.0f;
     float ratio = (float)m_height / m_width;
@@ -81,10 +76,60 @@ static void key_pressed(GLFWwindow *win, int key, int scancode, int action, int 
     }
 }
 
-void graphics_init(int const flags)
+static void mass_to_color(particle const * const p, unsigned int const c)
 {
-    if ((flags & OPT_NO_GUI) > 0) 
+    off_t i;
+    
+    color max = { 255, 0, 0, 255 };
+    color min = { 255, 255, 255, 255 };
+
+    // get min and max mass
+
+    float mass_min = p[0].mass, mass_max = p[0].mass;
+
+    for (i = 1; i < c; i++)
+    {
+        if (p[i].mass < mass_min)
+        {
+            mass_min = p[i].mass;
+        }
+        else if (p[i].mass > mass_max)
+        {
+            mass_max = p[i].mass;
+        }
+    }
+
+    // apply colors
+
+    for (i = 0; i < c; i++)
+    {
+        m_colors[i].r =  min.r + (max.r - min.r) * (p[i].mass - mass_min) / (mass_max - mass_min);
+        m_colors[i].g =  min.g + (max.g - min.g) * (p[i].mass - mass_min) / (mass_max - mass_min);
+        m_colors[i].b =  min.b + (max.b - min.b) * (p[i].mass - mass_min) / (mass_max - mass_min);
+        m_colors[i].r =  255;
+    }
+}
+
+void graphics_init(particle const * const p, opts_t const * const opts)
+{
+    if ((opts->flags & OPT_NO_GUI) > 0) 
         return;
+
+    m_c = opts->particle_count;
+    m_p = p;
+
+    // initialize colors
+
+    m_colors = (color*) malloc(sizeof(color) * m_c);
+
+    if ((opts->flags & OPT_STATIC_COLOR) > 0)
+    {
+        memset(m_colors, 255, sizeof(color) * m_c);
+    }
+    else
+    {
+        mass_to_color(p, m_c);
+    }
 
     if (!glfwInit())
     {
@@ -144,20 +189,12 @@ void compute_center(vec3f * const center, particle const * const p, unsigned int
     vec3f_scalar(center, center, -1.0 / c);
 }
 
-void graphics_draw(particle *p, unsigned int const c)
+void graphics_update()
 {
     vec3f center;
 
-    if (!m_colors)
-    {
-        m_colors = (color*)malloc(sizeof(color) * c);
-        memset(m_colors, 255, sizeof(color) * c);
-    }
-
     // compute center locally
-    compute_center(&center, p, c);
+    compute_center(&center, m_p, m_c);
 
-    m_c = c;
-    m_p = p;
     memcpy(&m_center, &center, sizeof(vec3f));
 }

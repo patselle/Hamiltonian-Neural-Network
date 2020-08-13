@@ -8,7 +8,8 @@
 enum
 {
     OPT_NONE = 0,
-    OPT_NO_GUI = 1
+    OPT_NO_GUI = 1,
+    OPT_STATIC_COLOR = 2
 };
 
 typedef struct
