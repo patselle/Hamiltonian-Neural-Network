@@ -40,8 +40,8 @@ static void particle_init(particle * * const p, opts_t const * const opts)
         p[0][i].position.y = (rand() % 50) - 25;
         p[0][i].position.z = 0;
 
-        p[0][i].momentum.x = frand() / 100;
-        p[0][i].momentum.y = frand() / 100;
+        p[0][i].momentum.x = frand() * opts->mom_max * 2 - opts->mom_max;
+        p[0][i].momentum.y = frand() * opts->mom_max * 2 - opts->mom_max;
         p[0][i].momentum.z = 0;
 
         p[0][i].mass = frand_min_max(opts->mass_min, opts->mass_max);

@@ -7,6 +7,7 @@
 #define PARTICLE_COUNT_DEFAULT 5
 #define MASS_MIN_DEFAULT 0.5f
 #define MASS_MAX_DEFAULT 1.0f
+#define MOMENTUM_MAX_DEFAULT 2.0f
 
 static void print_usage(int const exitCode)
 {
@@ -22,6 +23,8 @@ static void print_usage(int const exitCode)
     printf("  --particles\tParticle count (default %i)\n", PARTICLE_COUNT_DEFAULT);
     printf("  --mass-min\tMin. value of particle mass (default %f)\n", MASS_MIN_DEFAULT);
     printf("  --mass-max\tMax. value of particle mass (default %f)\n", MASS_MAX_DEFAULT);
+    printf("  --mom-max\tMax. value of initial particle momentum (default %f)\n", MOMENTUM_MAX_DEFAULT);
+
     exit(exitCode);
 }
 
@@ -40,6 +43,7 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
         { "iterations", required_argument, 0, 0 },
         { "mass-min",   required_argument, 0, 0 },
         { "mass-max",   required_argument, 0, 0 },
+        { "mom-max",    required_argument, 0, 0 },
         { "help",       no_argument,       0, 'h' },
         { "version",    no_argument,       0, 'v' },
         { 0,            0,                 0, 0 }
@@ -90,6 +94,14 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
                         print_usage(1);
                     }
                 }
+                else if (opt_idx == 6)
+                {
+                    opts->mom_max = (float)atof(optarg);
+                    if (opts->mom_max <= 0)
+                    {
+                        print_usage(1);
+                    }
+                }
                 break;
             case 'h':
                 print_usage(0);
@@ -110,6 +122,7 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
     opts->particle_count = opts->particle_count ? opts->particle_count : PARTICLE_COUNT_DEFAULT;
     opts->mass_min = opts->mass_min ? opts->mass_min : MASS_MIN_DEFAULT;
     opts->mass_max = opts->mass_max ? opts->mass_max : MASS_MAX_DEFAULT;
+    opts->mom_max = opts->mom_max ? opts->mom_max : MOMENTUM_MAX_DEFAULT;
 
     // plausibility check
 
