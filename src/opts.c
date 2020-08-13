@@ -19,7 +19,7 @@ static void print_usage(int const exitCode)
     printf("  --iterations\tLimit iterations\n");
     printf("\n");
     printf("particle specific options:\n");
-    printf("  --count\tParticle count (default %i)\n", PARTICLE_COUNT_DEFAULT);
+    printf("  --particles\tParticle count (default %i)\n", PARTICLE_COUNT_DEFAULT);
     printf("  --mass-min\tMin. value of particle mass (default %f)\n", MASS_MIN_DEFAULT);
     printf("  --mass-max\tMax. value of particle mass (default %f)\n", MASS_MAX_DEFAULT);
     exit(exitCode);
@@ -36,7 +36,7 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
     {
         { "trace",      required_argument, 0, 0 },
         { "no-gui",     no_argument,       0, 0 },
-        { "count",      required_argument, 0, 0 },
+        { "particles",  required_argument, 0, 0 },
         { "iterations", required_argument, 0, 0 },
         { "mass-min",   required_argument, 0, 0 },
         { "mass-max",   required_argument, 0, 0 },
