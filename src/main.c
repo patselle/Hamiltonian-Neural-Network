@@ -15,7 +15,6 @@
 #define PARTICLES 5
 #define TIME_MAX 10
 #define TIME_STEP 0.1
-#define MASS 1
 #define G 0.5
 
 static particle particles[PARTICLES];
@@ -113,7 +112,7 @@ int main(int argc, char **argv)
     trace_init(opts.trace_file, PARTICLES);
     graphics_init(opts.flags);
 
-    particle_init(particles, PARTICLES, MASS);
+    particle_init(particles, PARTICLES, &opts);
     
     pthread_create(&thread, NULL, particle_update, &opts);
 

@@ -15,6 +15,8 @@ typedef struct
 {
     char *trace_file;
     int flags;
+    float mass_min;
+    float mass_max;
 } opts_t;
 
 extern void opts_parse(opts_t * const opts, size_t const argc, char ** const argv);

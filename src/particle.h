@@ -4,6 +4,10 @@
 #include <time.h>
 
 #include "vec.h"
+#include "opts.h"
+
+#define MASS_MIN_DEFAULT 0.5
+#define MASS_MAX_DEFAULT 1
 
 typedef struct
 {
@@ -19,7 +23,12 @@ static inline float frand()
     return (float)rand() / RAND_MAX;
 }
 
-static void particle_init(particle * const p, size_t const count, float const mass)
+static inline float frand_min_max(float const min, float const max)
+{
+    return frand() * (max - min) + min;
+}
+
+static void particle_init(particle * const p, size_t const count, opts_t const * const opts)
 {
     off_t i;
 
@@ -35,7 +44,7 @@ static void particle_init(particle * const p, size_t const count, float const ma
         p[i].momentum.y = frand() / 100;
         p[i].momentum.z = 0;
 
-        p[i].mass = mass;
+        p[i].mass = frand_min_max(opts->mass_min ? opts->mass_min : MASS_MIN_DEFAULT, opts->mass_max ? opts->mass_max : MASS_MAX_DEFAULT);
     }
 }
 
