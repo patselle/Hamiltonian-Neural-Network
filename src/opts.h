@@ -15,6 +15,7 @@ typedef struct
 {
     char *trace_file;
     int flags;
+    size_t particle_count;
     float mass_min;
     float mass_max;
 } opts_t;

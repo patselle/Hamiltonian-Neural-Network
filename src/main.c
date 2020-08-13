@@ -12,12 +12,11 @@
 #include "opts.h"
 
 #define DIMENSIONS 2
-#define PARTICLES 5
 #define TIME_MAX 10
 #define TIME_STEP 0.1
 #define G 0.5
 
-static particle particles[PARTICLES];
+static particle *particles;
 
 static inline void particle_force(particle const * const pi, particle const * const pj, vec3f * const f_i, vec3f * const f_j)
 {
@@ -61,20 +60,20 @@ static void *particle_update(void *args)
 {
     off_t i, j;
     opts_t *opts;
-
-    vec3f forces[PARTICLES];
-
+    vec3f *forces;
     particle *pi, *pj;
 
     opts = (opts_t*)args;
 
+    forces = (vec3f*)malloc(sizeof(vec3f) * opts->particle_count);
+
     while (1)
     {
         // reset forces
-        memset(forces, 0, sizeof(vec3f) * PARTICLES);
+        memset(forces, 0, sizeof(vec3f) * opts->particle_count);
 
         // compute forces
-        for (i = 0; i < PARTICLES; i++)
+        for (i = 0; i < opts->particle_count; i++)
         {
             for (j = 0; j < i; j++)
             {
@@ -83,7 +82,7 @@ static void *particle_update(void *args)
         }
 
         // update particles momentum and position
-        for (i = 0; i < PARTICLES; i++)
+        for (i = 0; i < opts->particle_count; i++)
         {
             particle_move(particles + i, forces + i);
         }
@@ -94,12 +93,14 @@ static void *particle_update(void *args)
         if (!(opts->flags & OPT_NO_GUI))
         {
             // update ui
-            graphics_draw(particles, PARTICLES);
+            graphics_draw(particles, opts->particle_count);
 
             // sleep 13 milliseconds
             usleep(13 * 1000);
         }
     }
+
+    free(forces);
 }
 
 int main(int argc, char **argv)
@@ -109,10 +110,10 @@ int main(int argc, char **argv)
 
     opts_parse(&opts, argc, argv);
 
-    trace_init(opts.trace_file, PARTICLES);
+    trace_init(opts.trace_file, opts.particle_count);
     graphics_init(opts.flags);
 
-    particle_init(particles, PARTICLES, &opts);
+    particle_init(&particles, &opts);
     
     pthread_create(&thread, NULL, particle_update, &opts);
 

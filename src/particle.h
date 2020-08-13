@@ -2,12 +2,10 @@
 #define PARTICLE_H
 
 #include <time.h>
+#include <stdlib.h>
 
 #include "vec.h"
 #include "opts.h"
-
-#define MASS_MIN_DEFAULT 0.5
-#define MASS_MAX_DEFAULT 1
 
 typedef struct
 {
@@ -28,23 +26,25 @@ static inline float frand_min_max(float const min, float const max)
     return frand() * (max - min) + min;
 }
 
-static void particle_init(particle * const p, size_t const count, opts_t const * const opts)
+static void particle_init(particle * * const p, opts_t const * const opts)
 {
     off_t i;
 
     srand(time(NULL));
 
-    for (i = 0; i < count; i++)
+    p[0] = (particle*)malloc(sizeof(particle) * opts->particle_count);
+
+    for (i = 0; i < opts->particle_count; i++)
     {
-        p[i].position.x = (rand() % 50) - 25;
-        p[i].position.y = (rand() % 50) - 25;
-        p[i].position.z = 0;
+        p[0][i].position.x = (rand() % 50) - 25;
+        p[0][i].position.y = (rand() % 50) - 25;
+        p[0][i].position.z = 0;
 
-        p[i].momentum.x = frand() / 100;
-        p[i].momentum.y = frand() / 100;
-        p[i].momentum.z = 0;
+        p[0][i].momentum.x = frand() / 100;
+        p[0][i].momentum.y = frand() / 100;
+        p[0][i].momentum.z = 0;
 
-        p[i].mass = frand_min_max(opts->mass_min ? opts->mass_min : MASS_MIN_DEFAULT, opts->mass_max ? opts->mass_max : MASS_MAX_DEFAULT);
+        p[0][i].mass = frand_min_max(opts->mass_min, opts->mass_max);
     }
 }
 

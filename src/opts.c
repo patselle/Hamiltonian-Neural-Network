@@ -4,6 +4,10 @@
 
 #include "opts.h"
 
+#define PARTICLE_COUNT_DEFAULT 5
+#define MASS_MIN_DEFAULT 0.5f
+#define MASS_MAX_DEFAULT 1.0f
+
 static void print_usage(int const exitCode)
 {
     printf("usage:\n");
@@ -13,9 +17,10 @@ static void print_usage(int const exitCode)
     printf("  --trace\tOptional trace file for particle position and momentum\n");
     printf("  --no-gui\tDo not show user interface\n");
     printf("\n");
-    printf("partcle specific options:\n");
-    printf("  --mass-min\tMin. value of particle mass\n");
-    printf("  --mass-max\tMax. value of particle mass\n");
+    printf("particle specific options:\n");
+    printf("  --count\tParticle count (default %i)\n", PARTICLE_COUNT_DEFAULT);
+    printf("  --mass-min\tMin. value of particle mass (default %f)\n", MASS_MIN_DEFAULT);
+    printf("  --mass-max\tMax. value of particle mass (default %f)\n", MASS_MAX_DEFAULT);
     exit(exitCode);
 }
 
@@ -30,6 +35,7 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
     {
         { "trace",    required_argument, 0, 0 },
         { "no-gui",   no_argument,       0, 0 },
+        { "count",    required_argument, 0, 0 },
         { "mass-min", required_argument, 0, 0 },
         { "mass-max", required_argument, 0, 0 },
         { "help",     no_argument,       0, 'h' },
@@ -52,16 +58,24 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
                 }
                 else if (opt_idx == 2)
                 {
-                    opts->mass_min = (float)atof(optarg);
-                    if (!opts->mass_min)
+                    opts->particle_count = (float)atoi(optarg);
+                    if (opts->particle_count <= 0)
                     {
                         print_usage(1);
                     }
                 }
                 else if (opt_idx == 3)
                 {
+                    opts->mass_min = (float)atof(optarg);
+                    if (opts->mass_min <= 0)
+                    {
+                        print_usage(1);
+                    }
+                }
+                else if (opt_idx == 4)
+                {
                     opts->mass_max = (float)atof(optarg);
-                    if (!opts->mass_max)
+                    if (opts->mass_max <= 0)
                     {
                         print_usage(1);
                     }
@@ -78,5 +92,19 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
                 print_usage(1);
                 break;
         }
+    }
+
+    // take over (default) values
+
+    opts->particle_count = opts->particle_count ? opts->particle_count : PARTICLE_COUNT_DEFAULT;
+    opts->mass_min = opts->mass_min ? opts->mass_min : MASS_MIN_DEFAULT;
+    opts->mass_max = opts->mass_max ? opts->mass_max : MASS_MAX_DEFAULT;
+
+    // plausibility check
+
+    if (opts->mass_min > opts->mass_max)
+    {
+        fprintf(stderr, "mass min is bigger than mass max\n");
+        exit(1);
     }
 }
