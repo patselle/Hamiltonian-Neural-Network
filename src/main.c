@@ -9,6 +9,7 @@
 #include "vec.h"
 #include "graphics.h"
 #include "trace.h"
+#include "opts.h"
 
 #define DIMENSIONS 2
 #define PARTICLES 5
@@ -22,8 +23,6 @@ static particle particles[PARTICLES];
 static void particle_init2()
 {
     /* use particle_init() from particle.h */
-
-    printf("Initialize particles...\n");
 
     srand(time(NULL));
 
@@ -120,12 +119,15 @@ static void *particle_move(void *args)
     }
 }
 
-int main()
+int main(int argc, char **argv)
 {
     pthread_t thread;
+    opts_t opts;
 
-    trace_init("trace", PARTICLES);
-    graphics_init();
+    opts_parse(&opts, argc, argv);
+
+    trace_init(opts.trace_file, PARTICLES);
+    graphics_init(opts.flags);
 
     particle_init2();
     

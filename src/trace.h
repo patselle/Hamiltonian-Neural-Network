@@ -15,9 +15,12 @@ static char *trace_line;
 
 static inline void trace_init(char const * const file, size_t const n)
 {
-    trace_n = n;
-    trace_line = (char*)malloc(sizeof(char) * n * PARTICLE_MAX_CHARS);
-    trace_fp = fopen(file, "a");
+    if (file)
+    {
+        trace_n = n;
+        trace_line = (char*)malloc(sizeof(char) * n * PARTICLE_MAX_CHARS);
+        trace_fp = fopen(file, "a");
+    }
 }
 
 static inline void trace(particle const * const particles)
@@ -25,6 +28,9 @@ static inline void trace(particle const * const particles)
     off_t i;
 
     char str[PARTICLE_MAX_CHARS + 1];
+
+    if (!trace_fp)
+        return;
 
     trace_line[0] = '\0';
 
@@ -39,8 +45,11 @@ static inline void trace(particle const * const particles)
 
 static inline void trace_end()
 {
-    fclose(trace_fp);
-    free(trace_line);
+    if (trace_fp)
+    {
+        fclose(trace_fp);
+        free(trace_line);
+    }
 }
 
 #endif

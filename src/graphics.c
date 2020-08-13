@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "graphics.h"
+#include "opts.h"
 
 static GLFWwindow *m_win = NULL;
 
@@ -46,8 +47,11 @@ void display()
     glDisableClientState(GL_COLOR_ARRAY);
 }
 
-void graphics_init()
+void graphics_init(int const flags)
 {
+    if ((flags & OPT_NO_GUI) > 0) 
+        return;
+
     if (!glfwInit())
     {
         fprintf(stderr, "failure init!\n");
@@ -70,9 +74,12 @@ void graphics_loop()
 {
     if (!m_win)
     {
-        fprintf(stderr, "failure window not initialized!\n");
-        glfwTerminate();
-        exit(1);
+        // if window is not initialized (--no-gui), loop over stdin
+    
+        while (1)
+        {
+            getchar();
+        }
     }
 
     while (!glfwWindowShouldClose(m_win))
@@ -92,7 +99,6 @@ void graphics_draw(particle *p, unsigned int const c)
     if (!m_colors)
     {
         m_colors = (color*)malloc(sizeof(color) * c);
-
         memset(m_colors, 255, sizeof(color) * c);
     }
 
