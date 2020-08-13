@@ -14,6 +14,14 @@ static particle *m_p = NULL;
 static unsigned int m_c;
 static vec3f m_center;
 
+
+static int m_width = 640;
+static int m_height = 480;
+static int m_logicalWidth = 500;
+
+static int m_showDebug = 0;
+
+
 typedef struct
 {
     unsigned char r,g,b,a;
@@ -21,16 +29,20 @@ typedef struct
 
 static color *m_colors = NULL;
 
-void display()
+static void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
     if (!m_p)
         return;
 
+    float logicalWidthHalf = m_logicalWidth / 2.0f;
+    float ratio = (float)m_height / m_width;
+    float logicalHeightHalf = logicalWidthHalf * ratio;
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-50, 50, -50, 50, -1, 1);
+    glOrtho(-logicalWidthHalf, logicalWidthHalf, -logicalHeightHalf, logicalHeightHalf, -1, 1);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -43,11 +55,30 @@ void display()
     glVertexPointer(2, GL_FLOAT, sizeof(particle), m_p);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(color), m_colors);
 
-    glPointSize(3.0);
+    glPointSize(2.0);
     glDrawArrays(GL_POINTS, 0, m_c);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
+
+    if (m_showDebug)
+    {
+        glBegin(GL_LINES);
+        glColor3f(0, 0, 1);
+        glVertex2f(-m_center.x + 5, -m_center.y);
+        glVertex2f(-m_center.x - 5, -m_center.y);
+        glVertex2f(-m_center.x, -m_center.y + 5);
+        glVertex2f(-m_center.x, -m_center.y - 5);
+        glEnd();
+    }
+}
+
+static void key_pressed(GLFWwindow *win, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_F1 && action == GLFW_RELEASE)
+    {
+        m_showDebug = 1 - m_showDebug;
+    }
 }
 
 void graphics_init(int const flags)
@@ -61,7 +92,7 @@ void graphics_init(int const flags)
         exit(1);
     }
 
-    m_win = glfwCreateWindow(640, 480, "Hamiltonian Neural Network", NULL, NULL);
+    m_win = glfwCreateWindow(m_width, m_height, "Hamiltonian Neural Network", NULL, NULL);
 
     if (!m_win)
     {
@@ -71,6 +102,7 @@ void graphics_init(int const flags)
     }
 
     glfwMakeContextCurrent(m_win);
+    glfwSetKeyCallback(m_win, key_pressed);
 }
 
 void graphics_loop()
@@ -87,11 +119,12 @@ void graphics_loop()
 
     while (!glfwWindowShouldClose(m_win))
     {
+        glfwPollEvents();
+
         // custom render function
         display();
 
         glfwSwapBuffers(m_win);
-        glfwPollEvents();
     }
 
     glfwTerminate();
