@@ -16,6 +16,7 @@ static void print_usage(int const exitCode)
     printf("options:\n");
     printf("  --trace\tOptional trace file for particle position and momentum\n");
     printf("  --no-gui\tDo not show user interface\n");
+    printf("  --iterations\tLimit iterations\n");
     printf("\n");
     printf("particle specific options:\n");
     printf("  --count\tParticle count (default %i)\n", PARTICLE_COUNT_DEFAULT);
@@ -33,14 +34,15 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
     
     struct option long_opts[] =
     {
-        { "trace",    required_argument, 0, 0 },
-        { "no-gui",   no_argument,       0, 0 },
-        { "count",    required_argument, 0, 0 },
-        { "mass-min", required_argument, 0, 0 },
-        { "mass-max", required_argument, 0, 0 },
-        { "help",     no_argument,       0, 'h' },
-        { "version",  no_argument,       0, 'v' },
-        { 0,          0,                 0, 0 }
+        { "trace",      required_argument, 0, 0 },
+        { "no-gui",     no_argument,       0, 0 },
+        { "count",      required_argument, 0, 0 },
+        { "iterations", required_argument, 0, 0 },
+        { "mass-min",   required_argument, 0, 0 },
+        { "mass-max",   required_argument, 0, 0 },
+        { "help",       no_argument,       0, 'h' },
+        { "version",    no_argument,       0, 'v' },
+        { 0,            0,                 0, 0 }
     };
 
     while ((c = getopt_long(argc, argv, "hv", long_opts, &opt_idx)) >= 0)
@@ -66,13 +68,21 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
                 }
                 else if (opt_idx == 3)
                 {
+                    opts->iterations = (size_t)atoi(optarg);
+                    if (opts->iterations <= 0)
+                    {
+                        print_usage(1);
+                    }
+                }
+                else if (opt_idx == 4)
+                {
                     opts->mass_min = (float)atof(optarg);
                     if (opts->mass_min <= 0)
                     {
                         print_usage(1);
                     }
                 }
-                else if (opt_idx == 4)
+                else if (opt_idx == 5)
                 {
                     opts->mass_max = (float)atof(optarg);
                     if (opts->mass_max <= 0)
@@ -96,6 +106,7 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
 
     // take over (default) values
 
+    opts->iterations = opts->iterations ? opts->iterations : (size_t)-1;
     opts->particle_count = opts->particle_count ? opts->particle_count : PARTICLE_COUNT_DEFAULT;
     opts->mass_min = opts->mass_min ? opts->mass_min : MASS_MIN_DEFAULT;
     opts->mass_max = opts->mass_max ? opts->mass_max : MASS_MAX_DEFAULT;

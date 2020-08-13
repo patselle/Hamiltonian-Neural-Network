@@ -77,7 +77,7 @@ static void compute_center_of_mass(vec3f * const v, particle const * const p, si
 
 static void *particle_update(void *args)
 {
-    off_t i, j;
+    off_t i, j, c;
     opts_t *opts;
     vec3f *forces, center_of_mass;
     particle *pi, *pj;
@@ -86,7 +86,7 @@ static void *particle_update(void *args)
 
     forces = (vec3f*)malloc(sizeof(vec3f) * opts->particle_count);
 
-    while (1)
+    for (c = 0; c < opts->iterations; c++)
     {
         // reset forces
         memset(forces, 0, sizeof(vec3f) * opts->particle_count);
@@ -120,7 +120,8 @@ static void *particle_update(void *args)
         }
     }
 
-    free(forces);
+    // just exit
+    exit(0);
 }
 
 int main(int argc, char **argv)
