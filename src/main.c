@@ -56,11 +56,30 @@ static void particle_move(particle * const p, vec3f const * const force)
     vec3f_add(&p->position, &p->position, &tmp);
 }
 
+static void compute_center_of_mass(vec3f * const v, particle const * const p, size_t const c)
+{
+    off_t i;
+    vec3f tmp;
+    float total_mass = 0;
+
+    memset(v, 0, sizeof(vec3f));
+
+    for (i = 0; i < c; i++)
+    {
+        total_mass += p[i].mass;
+
+        vec3f_scalar(&tmp, &p[i].position, p[i].mass);
+        vec3f_add(v, v, &tmp);
+    }
+
+    vec3f_scalar(v, v, 1.0 / total_mass);
+}
+
 static void *particle_update(void *args)
 {
     off_t i, j;
     opts_t *opts;
-    vec3f *forces;
+    vec3f *forces, center_of_mass;
     particle *pi, *pj;
 
     opts = (opts_t*)args;
@@ -92,10 +111,9 @@ static void *particle_update(void *args)
 
         if (!(opts->flags & OPT_NO_GUI))
         {
-            // update ui
-            // actually this will only recompute center of mass
-            // actually center of mass should recomputed here in main. not in graphics component
-            graphics_update();
+            compute_center_of_mass(&center_of_mass, particles, opts->particle_count);
+
+            graphics_update(&center_of_mass);
 
             // sleep 13 milliseconds
             usleep(13 * 1000);

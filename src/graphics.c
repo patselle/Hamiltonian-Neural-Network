@@ -110,7 +110,7 @@ static void mass_to_color(particle const * const p, unsigned int const c)
     }
 }
 
-void graphics_init(particle const * const p, opts_t const * const opts)
+void graphics_init(particle * const p, opts_t const * const opts)
 {
     if ((opts->flags & OPT_NO_GUI) > 0) 
         return;
@@ -175,26 +175,7 @@ void graphics_loop()
     glfwTerminate();
 }
 
-void compute_center(vec3f * const center, particle const * const p, unsigned int const c)
+void graphics_update(vec3f * const center_of_mass)
 {
-    off_t i;
-
-    memset(center, 0, sizeof(vec3f));
-
-    for (i = 0; i < c; i++)
-    {
-        vec3f_add(center, center, &p[i].position);
-    }
-
-    vec3f_scalar(center, center, -1.0 / c);
-}
-
-void graphics_update()
-{
-    vec3f center;
-
-    // compute center locally
-    compute_center(&center, m_p, m_c);
-
-    memcpy(&m_center, &center, sizeof(vec3f));
+    memcpy(&m_center, center_of_mass, sizeof(vec3f));
 }
