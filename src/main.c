@@ -20,30 +20,6 @@
 
 static particle particles[PARTICLES];
 
-static void particle_init2()
-{
-    /* use particle_init() from particle.h */
-
-    srand(time(NULL));
-
-    particle_init(particles, PARTICLES, 1);
-
-    // particles[0].position.x = 5;
-    // particles[0].position.y = -2;
-    // particles[0].position.z = 0;
-    // particles[0].mass = 0.1;
-
-    // particles[1].position.x = 3;
-    // particles[1].position.y = 6;
-    // particles[1].position.z = 0;
-    // particles[1].mass = 0.5;
-
-    // particles[2].position.x = -1;
-    // particles[2].position.y = 4;
-    // particles[2].position.z = 0;
-    // particles[2].mass = 0.01;
-}
-
 static inline void particle_force(particle const * const pi, particle const * const pj, vec3f * const f_i, vec3f * const f_j)
 {
     vec3f force, distance, norm;
@@ -69,20 +45,36 @@ static inline void particle_force(particle const * const pi, particle const * co
     vec3f_sub(f_j, f_j, &force);
 }
 
-static void *particle_move(void *args)
+static void particle_move(particle * const p, vec3f const * const force)
 {
-    off_t i, j, c;
+    vec3f tmp;
 
-    vec3f tmp, r_new, p_new;
+    // update momentum
+    vec3f_scalar(&tmp, force, TIME_STEP);
+    vec3f_add(&p->momentum, &p->momentum, &tmp);
+
+    // update position
+    vec3f_scalar(&tmp, &p->momentum, TIME_STEP / p->mass);
+    vec3f_add(&p->position, &p->position, &tmp);
+}
+
+static void *particle_update(void *args)
+{
+    off_t i, j;
+    opts_t *opts;
+
     vec3f forces[PARTICLES];
 
     particle *pi, *pj;
 
-    for (c = 0; c < 1000; c++)
+    opts = (opts_t*)args;
+
+    while (1)
     {
         // reset forces
         memset(forces, 0, sizeof(vec3f) * PARTICLES);
 
+        // compute forces
         for (i = 0; i < PARTICLES; i++)
         {
             for (j = 0; j < i; j++)
@@ -91,31 +83,23 @@ static void *particle_move(void *args)
             }
         }
 
+        // update particles momentum and position
         for (i = 0; i < PARTICLES; i++)
         {
-            pi = particles + i;
-            
-            // scalar multiplication: F *TIME_STEP
-            vec3f_scalar(&tmp, forces + i, TIME_STEP);
-            // add p_old and F * TIME_STEP together (this is p_new)
-            vec3f_add(&p_new, &pi->momentum, &tmp);
-            // scalar multiplication of TIME_STEP / m * (p_old + F * TIME_STEP)
-            float scalar = TIME_STEP / pi->mass;
-            vec3f_scalar(&tmp, &p_new, scalar);
-            // add r_old and the previous computated expression together
-            vec3f_add(&r_new, &pi->position, &tmp);
-            
-            // update position of particle i
-            pi->position = r_new;
-            // update momentum of particle i
-            pi->momentum = p_new;
+            particle_move(particles + i, forces + i);
         }
+
         // trace particle positions
         trace(particles);
-        graphics_draw(particles, PARTICLES);
 
-        // sleep 13 milliseconds = 60 fps
-        usleep(13 * 1000);
+        if (!(opts->flags & OPT_NO_GUI))
+        {
+            // update ui
+            graphics_draw(particles, PARTICLES);
+
+            // sleep 13 milliseconds
+            usleep(13 * 1000);
+        }
     }
 }
 
@@ -129,9 +113,9 @@ int main(int argc, char **argv)
     trace_init(opts.trace_file, PARTICLES);
     graphics_init(opts.flags);
 
-    particle_init2();
+    particle_init(particles, PARTICLES, MASS);
     
-    pthread_create(&thread, NULL, particle_move, NULL);
+    pthread_create(&thread, NULL, particle_update, &opts);
 
     graphics_loop();
 

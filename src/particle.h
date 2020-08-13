@@ -1,6 +1,8 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
+#include <time.h>
+
 #include "vec.h"
 
 typedef struct
@@ -20,6 +22,8 @@ static inline float frand()
 static void particle_init(particle * const p, size_t const count, float const mass)
 {
     off_t i;
+
+    srand(time(NULL));
 
     for (i = 0; i < count; i++)
     {

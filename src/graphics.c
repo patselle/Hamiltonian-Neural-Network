@@ -12,6 +12,7 @@ static GLFWwindow *m_win = NULL;
 
 static particle *m_p = NULL;
 static unsigned int m_c;
+static vec3f m_center;
 
 typedef struct
 {
@@ -33,6 +34,8 @@ void display()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glTranslatef(m_center.x, m_center.y, m_center.z);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
@@ -94,14 +97,34 @@ void graphics_loop()
     glfwTerminate();
 }
 
+void compute_center(vec3f * const center, particle const * const p, unsigned int const c)
+{
+    off_t i;
+
+    memset(center, 0, sizeof(vec3f));
+
+    for (i = 0; i < c; i++)
+    {
+        vec3f_add(center, center, &p[i].position);
+    }
+
+    vec3f_scalar(center, center, -1.0 / c);
+}
+
 void graphics_draw(particle *p, unsigned int const c)
 {
+    vec3f center;
+
     if (!m_colors)
     {
         m_colors = (color*)malloc(sizeof(color) * c);
         memset(m_colors, 255, sizeof(color) * c);
     }
 
+    // compute center locally
+    compute_center(&center, p, c);
+
     m_c = c;
     m_p = p;
+    memcpy(&m_center, &center, sizeof(vec3f));
 }

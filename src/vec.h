@@ -52,6 +52,13 @@ static inline void vec3f_mul(vec3f * const c, vec3f const * const a, vec3f const
     c->z = a->z * b->z;
 }
 
+static inline void vec3f_div(vec3f * const c, vec3f const * const a, float const b)
+{
+    c->x = a->x / b;
+    c->y = a->y / b;
+    c->z = a->z / b;
+}
+
 static inline float vec3f_sum(vec3f const * const a)
 {
     return a->x + a->y + a->z;
