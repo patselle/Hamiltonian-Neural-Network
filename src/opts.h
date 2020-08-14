@@ -20,6 +20,7 @@ typedef struct
     size_t particle_count;
     float mass_min;
     float mass_max;
+    float mom_min;
     float mom_max;
 } opts_t;
 

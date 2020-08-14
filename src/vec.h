@@ -81,6 +81,5 @@ static inline void vec3f_print(vec3f const * const a)
     printf("(%f,%f,%f)\n", a->x, a->y, a->z);
 }
 
-
 #endif
 
