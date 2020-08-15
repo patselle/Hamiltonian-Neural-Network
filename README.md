@@ -7,3 +7,9 @@ Derivation of the equation for updating the new position using particle impulses
 Essential packages
 * libgles2-mesa-dev
 * libglfw3-dev
+
+For more informations run
+
+```console
+foo@bar:~$ ./bin/main --help
+```
