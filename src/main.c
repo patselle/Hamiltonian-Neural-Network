@@ -112,7 +112,7 @@ static void *particle_update(void *args)
 
         if (!(opts->flags & OPT_NO_GUI))
         {
-            compute_center_of_mass(&center_of_mass, particles, opts->particle_count);
+            // compute_center_of_mass(&center_of_mass, particles, opts->particle_count);
 
             graphics_update(&center_of_mass);
 
