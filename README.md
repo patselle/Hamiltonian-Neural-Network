@@ -8,7 +8,7 @@ Essential packages
 * libgles2-mesa-dev
 * libglfw3-dev
 
-For more informations run
+For more information run
 
 ```console
 foo@bar:~$ ./bin/main --help
