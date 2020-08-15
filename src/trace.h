@@ -7,7 +7,7 @@
 
 #include "particle.h"
 
-#define PARTICLE_MAX_CHARS (4 + 3 + FLT_MANT_DIG - FLT_MIN_EXP)
+#define FLOAT_MAX_CHARS (3 + FLT_MANT_DIG - FLT_MIN_EXP)
 
 static FILE *trace_fp = NULL;
 static size_t trace_n;
@@ -18,16 +18,18 @@ static inline void trace_init(char const * const file, size_t const n)
     if (file)
     {
         trace_n = n;
-        trace_line = (char*)malloc(sizeof(char) * n * PARTICLE_MAX_CHARS);
+        trace_line = (char*)malloc(sizeof(char) * n * (FLOAT_MAX_CHARS + 7));
         trace_fp = fopen(file, "a");
     }
 }
 
-static inline void trace(particle const * const particles)
+static inline void trace(particle * const particles)
 {
     off_t i;
 
-    char str[PARTICLE_MAX_CHARS + 1];
+    char str[FLOAT_MAX_CHARS + 7];
+
+    particle *p;
 
     if (!trace_fp)
         return;
@@ -36,7 +38,9 @@ static inline void trace(particle const * const particles)
 
     for (i = 0; i < trace_n; i++)
     {
-        sprintf(str, "(%f,%f,%f)",particles[i].position.x, particles[i].position.y, particles[i].position.z);
+	p = particles + i;
+
+        sprintf(str, "%f;%f;%f;%f;%f;%f;",p->position.x, p->position.y, p->position.z, p->momentum.x, p->momentum.y, p->momentum.z);
         strcat(trace_line, str);
     }
 
