@@ -14,7 +14,7 @@
 #define DIMENSIONS 2
 #define TIME_MAX 10
 #define TIME_STEP 0.1
-#define G 5
+#define G 10
 
 static particle *particles;
 
