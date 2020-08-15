@@ -21,6 +21,7 @@ static void print_usage(int const exitCode)
     printf("  --iterations\tLimit iterations\n");
     printf("\n");
     printf("particle specific options:\n");
+    printf("  --init\tOptional particle initialization file (format: posx;posy;posz;momx;momy;momz;mass)\n");
     printf("  --particles\tParticle count (default %i)\n", PARTICLE_COUNT_DEFAULT);
     printf("  --mass-min\tMin. value of particle mass (default %f)\n", MASS_MIN_DEFAULT);
     printf("  --mass-max\tMax. value of particle mass (default %f)\n", MASS_MAX_DEFAULT);
@@ -36,7 +37,7 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
     int opt_idx = 0;
 
     memset(opts, 0, sizeof(opts_t));
-    
+
     struct option long_opts[] =
     {
         { "trace",       required_argument, 0, 0 },
@@ -47,6 +48,7 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
         { "mass-max",    required_argument, 0, 0 },
         { "mom-min",     required_argument, 0, 0 },
         { "mom-max",     required_argument, 0, 0 },
+        { "init",        required_argument, 0, 0 },
         { "help",        no_argument,       0, 'h' },
         { "version",     no_argument,       0, 'v' },
         { 0,             0,                 0, 0 }
@@ -113,6 +115,10 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
                         print_usage(1);
                     }
                 }
+		else if (opt_idx == 8)
+                {
+                    opts->init_file = optarg;
+                }
                 break;
             case 'h':
                 print_usage(0);
@@ -135,7 +141,7 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
     opts->mass_max = opts->mass_max ? opts->mass_max : MASS_MAX_DEFAULT;
     opts->mom_min = opts->mom_min ? opts->mom_min : MOMENTUM_MIN_DEFAULT;
     opts->mom_max = opts->mom_max ? opts->mom_max : MOMENTUM_MAX_DEFAULT;
- 
+
     // plausibility check
 
     if (opts->mass_min > opts->mass_max)

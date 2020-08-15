@@ -132,9 +132,16 @@ int main(int argc, char **argv)
 
     opts_parse(&opts, argc, argv);
 
-    trace_init(opts.trace_file, opts.particle_count);
-    particle_init(&particles, &opts);
+    if (opts.init_file)
+    {
+        particle_init_file(&particles, &opts.particle_count, opts.init_file);
+    }
+    else
+    {
+        particle_init(&particles, &opts);
+    }
 
+    trace_init(opts.trace_file, opts.particle_count);
     graphics_init(particles, &opts);
 
     pthread_create(&thread, NULL, particle_update, &opts);
