@@ -33,8 +33,6 @@ void particle_init(particle * * const p, opts_t const * const opts)
 
         p[0][i].mass = frand_min_max(opts->mass_min, opts->mass_max);
     }
-
-
 }
 
 void particle_init_file(particle * * const p, size_t * const n, char const * const path)

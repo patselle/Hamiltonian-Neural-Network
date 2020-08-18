@@ -40,7 +40,7 @@ static inline void trace(particle * const particles)
     {
 	p = particles + i;
 
-        sprintf(str, "%f;%f;%f;%f;%f;%f;",p->position.x, p->position.y, p->position.z, p->momentum.x, p->momentum.y, p->momentum.z);
+        sprintf(str, "%f;%f;%f;%f;%f;%f",p->position.x, p->position.y, p->position.z, p->momentum.x, p->momentum.y, p->momentum.z);
         strcat(trace_line, str);
     }
 
