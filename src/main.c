@@ -88,6 +88,9 @@ static void *particle_update(void *args)
 
     for (c = 0; c < opts->iterations; c++)
     {
+        // trace particle positions
+        trace(particles);
+
         // reset forces
         memset(forces, 0, sizeof(vec3f) * opts->particle_count);
 
@@ -105,9 +108,6 @@ static void *particle_update(void *args)
         {
             particle_move(particles + i, forces + i);
         }
-
-        // trace particle positions
-        trace(particles);
 
         if (!(opts->flags & OPT_NO_GUI))
         {
