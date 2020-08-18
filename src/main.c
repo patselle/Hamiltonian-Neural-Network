@@ -12,9 +12,8 @@
 #include "opts.h"
 
 #define DIMENSIONS 2
-#define TIME_MAX 10
-#define TIME_STEP 0.1
-#define G 10
+#define TIME_STEP 0.5
+#define G 1
 
 static particle *particles;
 
@@ -31,8 +30,8 @@ static inline void particle_force(particle const * const pi, particle const * co
     vec3f_scalar(&norm, &distance, 1.0 / euclidian);
 
     // compute normalized distance (NOTE the minus sign is due the inverted direction between F_ij and r_ij)
-    // float scalar = - G * pi->mass * pj->mass / (euclidian * euclidian);
     float scalar = - G * pi->mass * pj->mass / (euclidian);
+    // float scalar = - G * pi->mass * pj->mass / (euclidian);
 
     // compute force
     vec3f_scalar(&force, &norm, scalar);
