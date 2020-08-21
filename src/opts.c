@@ -19,6 +19,7 @@ static void print_usage(int const exitCode)
     printf("  --trace\tOptional trace file for particle position and momentum\n");
     printf("  --no-gui\tDo not show user interface\n");
     printf("  --iterations\tLimit iterations\n");
+    printf("  --debug\tPrint position,force,momentum of each itertion to stdout\n");
     printf("\n");
     printf("particle specific options:\n");
     printf("  --init\tOptional particle initialization file (format: posx;posy;posz;momx;momy;momz;mass)\n");
@@ -49,6 +50,7 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
         { "mom-min",     required_argument, 0, 0 },
         { "mom-max",     required_argument, 0, 0 },
         { "init",        required_argument, 0, 0 },
+        { "debug",       no_argument,       0, 0 },
         { "help",        no_argument,       0, 'h' },
         { "version",     no_argument,       0, 'v' },
         { 0,             0,                 0, 0 }
@@ -115,9 +117,13 @@ void opts_parse(opts_t * const opts, size_t const argc, char ** const argv)
                         print_usage(1);
                     }
                 }
-		else if (opt_idx == 8)
+		        else if (opt_idx == 8)
                 {
                     opts->init_file = optarg;
+                }
+                else if (opt_idx == 9)
+                {
+                    opts->flags |= OPT_DEBUG;
                 }
                 break;
             case 'h':

@@ -75,6 +75,26 @@ static void compute_center_of_mass(vec3f * const v, particle const * const p, si
     vec3f_scalar(v, v, 1.0 / total_mass);
 }
 
+static void particle_printf(size_t const iteration, size_t const n, vec3f const * const forces)
+{
+    off_t i;
+    particle *pi;
+    vec3f const *fi;
+
+    printf("------------ iteration %jd ------------\n", iteration);
+
+    for (i = 0; i < n; i++)
+    {
+        pi = particles + i;
+        fi = forces + i;
+
+        printf("particle %jd\n", i);
+        printf("\tposition %f, %f, %f\n", pi->position.x, pi->position.y, pi->position.z);
+        printf("\tforce    %f, %f, %f\n", fi->x, fi->y, fi->z);
+        printf("\tmomentum %f, %f, %f\n", pi->momentum.x, pi->momentum.y, pi->momentum.z);
+    }
+}
+
 static void *particle_update(void *args)
 {
     off_t i, j, c;
@@ -86,9 +106,17 @@ static void *particle_update(void *args)
 
     forces = (vec3f*)malloc(sizeof(vec3f) * opts->particle_count);
 
+    memset(forces, 0, sizeof(vec3f) * opts->particle_count);
+
     for (c = 0; c < opts->iterations; c++)
     {
-        // trace particle positions
+        // tracing and debugging
+
+        if (opts->flags & OPT_DEBUG)
+        {
+            particle_printf(c, opts->particle_count, forces);
+        }
+
         trace(particles);
 
         // reset forces
@@ -119,6 +147,14 @@ static void *particle_update(void *args)
             usleep(13 * 1000);
         }
     }
+
+    // trace again
+    if (opts->flags & OPT_DEBUG)
+    {
+        particle_printf(c, opts->particle_count, forces);
+    }
+
+    trace(particles);
 
     // just exit
     exit(0);
