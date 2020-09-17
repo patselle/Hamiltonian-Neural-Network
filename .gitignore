@@ -2,3 +2,5 @@ obj
 bin
 
 jupyter/.ipynb_checkpoints/
+jupyter/images/
+jupyter/images2/
